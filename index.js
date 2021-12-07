@@ -5,6 +5,10 @@ const dotenv=require('dotenv')
 const helmet=require('helmet')
 const morgan=require('morgan')
 
+const userRoute=require('./routes/users')
+const authRoute=require('./routes/auth')
+
+
 // to make dotenv ready to use
 dotenv.config()
 
@@ -20,15 +24,9 @@ app.use(express.json())
 app.use(helmet())
 app.use(morgan("common"))
 
-// try app
-app.get('/',(req,res)=>{
-    res.send('Welcome to Home page')
-})
-
-app.get('/users',(req,res)=>{
-    res.send('Welcome to Users page')
-})
-
+// using different routes
+app.use('/api/users',userRoute)
+app.use('/api/auth',authRoute)
 
 const port=process.env.PORT || 3000
 
