@@ -1,9 +1,10 @@
 const express=require('express')
-const app=express()
 const mongoose=require('mongoose')
 const dotenv=require('dotenv')
 const helmet=require('helmet')
 const morgan=require('morgan')
+
+const app=express()
 
 const userRoute=require('./routes/users')
 const authRoute=require('./routes/auth')
@@ -12,7 +13,7 @@ const authRoute=require('./routes/auth')
 // to make dotenv ready to use
 dotenv.config()
 
-// connecting mongoose/MongoDB
+// connecting mongoose/MongoDB, refer docs connections section
 mongoose.connect(process.env.MONGO_URL,{useNewUrlParser:true,
 useUnifiedTopology:true},
 ()=>{
