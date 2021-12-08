@@ -1,7 +1,7 @@
 const mongoose=require('mongoose')
 
 const userSchema=new mongoose.Schema({
-    userName:{
+    username:{
         type:String,
         required:true,
         min:3,
@@ -39,6 +39,9 @@ const userSchema=new mongoose.Schema({
         type:Boolean,
         default:false
     }
-})
+},
+// whenver this object is updated it will automatically update our timestamps
+{timestamps:true}
+)
 
-module.exports=userSchema
+module.exports=mongoose.model('User',userSchema)
