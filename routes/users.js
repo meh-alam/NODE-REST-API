@@ -57,17 +57,25 @@ router.get('/:id',async(req,res)=>{
 
 // follow a user
 router.put('/:id/follow',async(req,res)=>{
+    //if id in body(currentUser) isn't equal to id in params (the user)
     if(req.body.userId!==req.params.id){
         try{
+            // user to be followed
             const user=await User.findById(req.params.id)
+            // current user
             const currentUser=await User.findById(req.body.userId)
-            if(!user.followers.includes(req.body.userId)){
+            // if currentUser isn't in the followers array of the user 
+            // means currentUser isn't already following that user
+            if(!user.followers.includes(currentUser)){
+                // push currentUser id in user's followers
                 await User.updateOne({$push: {followers:req.body.userId}})
+                // and push user in the following of currentUser
                 await currentUser.updateOne({$push: {following:req.params.id}})
                 res.status(200).send('User has been followed!')
             }
             else
             {
+                // if already following
                 res.status(403).send('You already follow this user!')
             }
         }
@@ -77,6 +85,7 @@ router.put('/:id/follow',async(req,res)=>{
         }
     }
     else{
+        // if currentUser and user are same
         res.status(403).send('You can not follow yourself!')
     }
 })
