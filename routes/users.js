@@ -41,8 +41,13 @@ router.delete("/:id", async (req, res) => {
 // get a user
 router.get('/:id',async(req,res)=>{
     try{
+        // here we are getting all the props inside the user doc
+        // so we need to remove unnecessary props (we dont want/want to hide) like password, createdAt
         const user= await User.findById(req.params.id)
-        res.status(200).json(user)
+        // spreading the user document
+        const {password,createdAt,updatedAt,isAdmin, ...other}=user._doc
+        // sending just the remaining (other) props as a response
+        res.status(200).json(other)
     }
     catch(err)
     {
@@ -51,6 +56,30 @@ router.get('/:id',async(req,res)=>{
 })
 
 // follow a user
+router.put('/:id/follow',async(req,res)=>{
+    if(req.body.userId!==req.params.id){
+        try{
+            const user=await User.findById(req.params.id)
+            const currentUser=await User.findById(req.body.userId)
+            if(!user.followers.includes(req.body.userId)){
+                await User.updateOne({$push: {followers:req.body.userId}})
+                await currentUser.updateOne({$push: {following:req.params.id}})
+                res.status(200).send('User has been followed!')
+            }
+            else
+            {
+                res.status(403).send('You already follow this user!')
+            }
+        }
+        catch(err)
+        {
+            res.status(500).send(err.message)
+        }
+    }
+    else{
+        res.status(403).send('You can not follow yourself!')
+    }
+})
 
 // unfollow a user
 
