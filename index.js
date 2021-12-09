@@ -6,8 +6,10 @@ const morgan=require('morgan')
 
 const app=express()
 
+// importing routes
 const userRoute=require('./routes/users')
 const authRoute=require('./routes/auth')
+const postsRoute=require('./routes/posts')
 
 
 // to make dotenv ready to use
@@ -28,6 +30,7 @@ app.use(morgan("common"))
 // using different routes
 app.use('/api/users',userRoute)
 app.use('/api/auth',authRoute)
+app.use('/api/posts',postsRoute)
 
 const port=process.env.PORT || 3000
 
