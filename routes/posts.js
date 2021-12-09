@@ -53,20 +53,25 @@ router.delete('/:id',async(req,res)=>{
 //like / dislike a post 
 router.put('/:id/like',async(req,res)=>{
         // liking a post
-        try{
-            const post=await Post.findById(req.params.id)
-            if(!post.likes.includes(req.body.userId)){
-                await Post.updateOne({$push:{likes:req.body.userId}})
-                res.status(200).send('Post liked!')
+        const post=await Post.findById(req.params.id)
+        if(post.userId!==req.body.userId){
+            try{
+                if(!post.likes.includes(req.body.userId)){
+                    await Post.updateOne({$push:{likes:req.body.userId}})
+                    res.status(200).send('Post liked!')
+                }
+            // disliking a post
+                else{
+                    await Post.updateOne({$pull:{likes:req.body.userId}})
+                    res.status(200).send('Post disliked!')
+                }
             }
-        // disliking a post
-            else{
-                await Post.updateOne({$pull:{likes:req.body.userId}})
-                res.status(200).send('Post disliked!')
+            catch(err){
+                res.status(500).json(err.message)
             }
         }
-        catch(err){
-            res.status(500).json(err.message)
+        else{
+            res.status(403).send('You can not like your own post!')
         }
     }
 )
