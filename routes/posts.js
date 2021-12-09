@@ -1,5 +1,6 @@
 const router=require('express').Router()
 const Post=require('../models/Post')
+const User=require('../models/User')
 
 
 // create a post
@@ -77,7 +78,34 @@ router.put('/:id/like',async(req,res)=>{
 )
 
 // get a post 
+router.get('/:id',async(req,res)=>{
+    try{
+        const post = await Post.findById(req.params.id)
+        res.status(200).json(post)
+    }
+    catch(err)
+    {
+        res.status(500).json(err.message)
+    }
+})
 
 // get timeline post
+router.get('/timeline/all',async(req,res)=>{
+    try{
+        const currentUser=await User.findById(req.body.userId)
+        const userPosts=await Post.find({userId:currentUser._id})
+        const friendsPosts=await Promise.all(
+            currentUser.following.map(friendId=>{
+                // find those posts where userId is same as friendId
+                return Post.find({userId:friendId})
+            })
+        )
+        // concatinate both the arrays (all the posts)
+        res.json(userPosts.concat(...friendsPosts))
+    }
+    catch(err){
+        res.status(500).json(err.message)
+    }
+})
 
 module.exports=router
