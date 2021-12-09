@@ -10,14 +10,14 @@ router.put("/:id", async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
       } catch (err) {
-        return res.status(500).json(err);
+        return res.status(500).json(err.message);
       }
     }
     try {
         await User.findByIdAndUpdate(req.params.id, {$set: req.body,});
       res.status(200).json("Account has been updated successfully!");
     } catch (err) {
-      return res.status(500).json(err);
+      return res.status(500).json(err.message);
     }
   } else {
     return res.status(403).json("You can update only your account!");
@@ -51,7 +51,7 @@ router.get('/:id',async(req,res)=>{
     }
     catch(err)
     {
-        res.status(500).send(err.message)
+        res.status(500).json(err.message)
     }
 })
 
@@ -81,7 +81,7 @@ router.put('/:id/follow',async(req,res)=>{
         }
         catch(err)
         {
-            res.status(500).send(err.message)
+            res.status(500).json(err.message)
         }
     }
     else{
@@ -116,7 +116,7 @@ router.put('/:id/unfollow',async(req,res)=>{
         }
         catch(err)
         {
-            res.status(500).send(err.message)
+            res.status(500).json(err.message)
         }
     }
     else{
